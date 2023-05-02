@@ -80,7 +80,7 @@ class GD():
         self.early_stop = False
 
     def step(self, data, labels, epoch):
-        # loss = self.model.loss(data, labels, self.loss_fn)
+        loss = self.model.loss(data, labels, self.loss_fn)
         dW1, db1, dW2, db2 = self.model.gradient()
         if np.linalg.norm(np.concatenate((dW1.flatten(), db1.flatten(), dW2.flatten(), db2.flatten()))) < self.gtol:
             self.early_stop = True
