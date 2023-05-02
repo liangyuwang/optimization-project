@@ -28,51 +28,7 @@ def line_search(model, data, labels, loss_fn, p_list, alpha=0.8, beta=0.5):
 
 
 class LBFGS:
-    def __init__(self, f, x0, gtol=1e-5, maxiter=100, history_size=10):
-        self.f = f
-        self.x = x0.copy()
-        self.gtol = gtol
-        self.maxiter = maxiter
-        self.history_size = history_size
-        self.H = np.eye(len(x0))
-        self.old_dirs = []
-        self.old_stps = []
-        self.old_fxs = []
-        
-    def zero_grad(self):
-        pass
-    
-    def step(self):
-        fx, gx = self.f(self.x)
-        p = -np.dot(self.H, gx)
-        alpha = 1.0
-        while self.f(self.x + alpha*p)[0] > fx + alpha*self.gtol*np.dot(gx, p):
-            alpha *= 0.5
-        xprev = self.x.copy()
-        self.x = self.x + alpha*p
-        fxprev, gxprev = fx, gx
-        fx, gx = self.f(self.x)
-        y = gx - gxprev
-        s = self.x - xprev
-        rho = 1.0 / np.dot(y, s)
-        if len(self.old_dirs) == self.history_size:
-            self.old_dirs.pop(0)
-            self.old_stps.pop(0)
-            self.old_fxs.pop(0)
-        self.old_dirs.append(s)
-        self.old_stps.append(y)
-        self.old_fxs.append(fx)
-        q = gx
-        a = []
-        for i in range(len(self.old_dirs)-1, -1, -1):
-            a.append(rho * np.dot(self.old_dirs[i], q))
-            q = q - a[-1] * self.old_stps[i]
-        r = self.H.dot(q)
-        for i in range(len(self.old_dirs)):
-            b = rho * np.dot(self.old_stps[i], r)
-            r = r + self.old_dirs[i] * (a[-i-1] - b)
-        self.H = np.dot(np.dot(np.eye(len(self.x)) - rho * np.outer(s, y), self.H), np.eye(len(self.x)) - rho * np.outer(y, s)) + rho * np.outer(s, s)
-        return fx, gx
+    ...
 
 
 class BFGS:
@@ -111,11 +67,10 @@ class Newton():
         if np.linalg.norm(np.concatenate((dW1.flatten(), db1.flatten(), dW2.flatten(), db2.flatten()))) < self.gtol:    
             self.early_stop = True
             print('epoch {} is converged'.format(epoch))  
-        print('epoch {}, loss: {}'.format(epoch, loss/data.shape[0]))
         return self.model
 
 
-
+# Gradient Descent
 class GD():
     def __init__(self, model, loss_fn, lr=1e-3, gtol=1e-5):
         self.model = model
@@ -138,6 +93,7 @@ class GD():
         return self.model
 
 
+# Steepest Descent
 class SD():
     def __init__(self, model, loss_fn, gtol=1e-5):
         self.model = model
