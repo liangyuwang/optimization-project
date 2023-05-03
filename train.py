@@ -4,7 +4,7 @@ from tqdm import tqdm
 from dataset import data_init
 from models import Linear, MLP2
 from losses import cross_entropy
-from optim import SD, LBFGS, BFGS
+from optim import SD, LBFGS, BFGS, DFP
 
 def train(
         model: str = 'linear',
@@ -37,6 +37,8 @@ def train(
     loss_fn = cross_entropy()
     if optimizer == 'sd':
         optimizer = SD(model, loss_fn, gtol=1e-5)
+    elif optimizer == 'dfp':
+        optimizer = DFP(model, loss_fn, gtol=1e-5)
     elif optimizer == 'bfgs':
         optimizer = BFGS(model, loss_fn, gtol=1e-5)
     elif optimizer == 'lbfgs':
