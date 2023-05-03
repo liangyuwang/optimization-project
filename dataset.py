@@ -12,7 +12,7 @@ def data_init(sample_rate=0.001, batch_size=None):
         sample_rate = 1
 
     # load the dataset
-    transform = transforms.Compose([transforms.Resize((28, 28)), 
+    transform = transforms.Compose([transforms.Resize((10, 10)), 
                                     transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
     root_dir = Path(torch.hub.get_dir()) / 'datasets/MNIST'
     train_dataset = torchvision.datasets.MNIST(root=root_dir, train=True, transform=transform, download=True)
