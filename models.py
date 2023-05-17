@@ -2,10 +2,36 @@ import torch
 torch.manual_seed(211)
 
 
-# def softmax_gradient(x):
-#     """x shape: (N, C)"""
-#     softmax_x = torch.softmax(x, dim=1)
-#     return softmax_x * (1 - softmax_x)
+class Rosen():
+
+    def __init__(self, device='cpu'):
+        self.x = torch.randn(1,1).requires_grad_(True).to(device)
+        self.y = torch.randn(1,1).requires_grad_(True).to(device)
+        self.ctx = []
+    
+    def zero_grad(self):
+        pass
+
+    def forward(self, x):
+        return 10 * (self.y - self.x**2)**2 + (1 - self.x)**2
+    
+    def loss(self, x, y, loss_fn):
+        y_pred = self.forward(x)
+        self.ctx = [x, y_pred, y, loss_fn]
+        return torch.sum(y_pred)
+    
+    def gradient(self):
+        x, y_pred, y, loss_fn = self.ctx
+        grad_x, grad_y = torch.autograd.grad(
+            self.loss(x,y,loss_fn), [self.x, self.y])
+        return grad_x, grad_y
+    
+    def parameters(self):
+        return self.x, self.y
+    
+    def set_params(self, params: tuple or list):
+        self.x, self.y = params
+
 
 class Linear():
 
@@ -80,3 +106,5 @@ class MLP2():
     
     def set_params(self, params: tuple or list):
         self.W1, self.b1, self.W2, self.b2 = params
+
+
